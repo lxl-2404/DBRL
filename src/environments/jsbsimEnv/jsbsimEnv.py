@@ -3,15 +3,15 @@ import re
 import sys
 import time
 
-import gym
+import gymnasium as gym
 import numpy as np
-from gym import Env
-from gym.spaces import Box, Discrete
+from gymnasium import Env
+from gymnasium.spaces import Box, Discrete
 
 sys.path.append('./src/environments/jsbsimEnv')
 try:
-    from gym.envs.jsbsimEnv.jsbsimFdm import JsbsimFdm as Fdm
-    print("Gym")
+    from .jsbsimFdm import JsbsimFdm as Fdm
+    print("Gymnasium")
     time.sleep(2)
 except:
     from jsbsimFdm import JsbsimFdm as Fdm
@@ -201,6 +201,8 @@ class JsbsimEnv(Env):
 
         terminate = True if self.terminate() else False
         
+        truncated = False
+        
         ob = np.array([  # ~100
             (self.fdm1.getProperty('position')[0] - self.fdm1.param['fdm_ic_lat']) * 1e4,
             (self.fdm1.getProperty('position')[1] - self.fdm1.param['fdm_ic_long']) * 1e4,
@@ -215,8 +217,8 @@ class JsbsimEnv(Env):
             (self.fdm2.getProperty('attitudeDeg')[1] - self.fdm2.param['fdm_ic_theta']),
             (self.fdm2.getProperty('attitudeDeg')[2] - self.fdm2.param['fdm_ic_phi']),
         ])
-
-        return ob, self.reward(), terminate, {}
+        
+        return ob, self.reward(), terminate, truncated, {}
 
     def render(self, id=0):
 
@@ -226,8 +228,8 @@ class JsbsimEnv(Env):
         if id == 2 or id == 0:
             self.fdm2.set_output_directive('./data_output/flightgear2.xml')
 
-    def reset(self):
-        
+    def reset(self, seed=None, options=None):
+        super().reset(seed=seed) 
         self.fdm1 = Fdm(
             fdm_id=self.param1['fdm_id'],
             fdm_aircraft=self.param1['fdm_aircraft'],
@@ -272,6 +274,6 @@ class JsbsimEnv(Env):
             (self.fdm2.getProperty('attitudeDeg')[1] - self.fdm2.param['fdm_ic_theta']),
             (self.fdm2.getProperty('attitudeDeg')[2] - self.fdm2.param['fdm_ic_phi']),
         ])
-        
-        return ob
+        info={}
+        return ob, info
 

@@ -1,7 +1,8 @@
 import time
 
 import jsbsim
-
+import os
+os.environ['JSBSIM_DEBUG'] = '0' #决定jsbsim自带的打印要不要显示。
 
 class JsbsimFdm():
 

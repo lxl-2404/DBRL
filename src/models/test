@@ -1,0 +1,9 @@
+{'self': <stable_baselines3.sac.sac.SAC object at 0x00000250BE1E3940>, 'total_timesteps': 1000, 'callback': <stable_baselines3.common.callbacks.CallbackList object at 0x00000250D5D6D880>, 'log_interval': 1, 'tb_log_name': 'SAC',
+'reset_num_timesteps': True, 'progress_bar': True, 'env': <stable_baselines3.common.vec_env.dummy_vec_env.DummyVecEnv object at 0x00000250BE1E3A30>, 'train_freq': TrainFreq(frequency=1, unit=<TrainFrequencyUnit.STEP: 'step'>),
+'replay_buffer': <stable_baselines3.common.buffers.ReplayBuffer object at 0x00000250BE1E3BB0>, 'action_noise': NormalActionNoise(mu=[0. 0. 0. 0. 0. 0. 0.], sigma=[0.1 0.1 0.1 0.1 0.1 0.1 0.1]), 'learning_starts': 100, 'num_collected_steps': 
+1, 'num_collected_episodes': 0, 'continue_training': True, 'actions': array([[ 0.7319313 ,  1.        , -1.        ,  1.        ,  0.14495045,
+         0.        ,  0.00228742]], dtype=float32), 'buffer_actions': array([[ 0.7319313 ,  1.        , -1.        ,  1.        , -0.7100991 ,
+        -1.        , -0.99542516]], dtype=float32), 'new_obs': array([[ 1.81332079e+02, -1.63626263e+00, -2.19096250e+02,
+         3.54833637e+02, -3.79695820e+01, -1.61912744e+02,
+         1.81918619e+02,  1.54597162e-03, -1.05915291e+01,
+         1.03325001e-03, -3.49672616e-02,  4.55917604e-03]]), 'rewards': array([-0.001], dtype=float32), 'dones': array([False]), 'infos': [{'TimeLimit.truncated': False}]}

@@ -2,11 +2,13 @@ import argparse
 import os
 import time
 
-import gym
+import gymnasium as gym
 import numpy as np
 from stable_baselines3 import SAC
+from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.noise import (NormalActionNoise,
                                             OrnsteinUhlenbeckActionNoise)
+from save_callback import SaveDecisionCallback
 
 
 def parse_args():
@@ -22,9 +24,9 @@ def parse_args():
 
 args = parse_args()
 
-env = gym.make(
-    "DBRLJsbsim-v0",
-    policy2=args.trainPolicy
+env = make_vec_env(
+    lambda: gym.make("DBRLJsbsim-v0", policy2=args.trainPolicy),
+    n_envs=1
 )
 
 n_actions = env.action_space.shape[-1]
@@ -40,26 +42,34 @@ model = SAC(
 path = r'./log/'
 if not os.path.exists(path):
     os.mkdir(path)
-
+save_callback = SaveDecisionCallback(save_path="./log/decision_data.npy") # 保存路径
 if args.train:
     # try:
     #     model.set_parameters("./log/sac_jsbsim")
     # except:
     #     pass
-    model.learn(total_timesteps=int(args.timesteps), log_interval=1)
-    model.save("./log/sac_jsbsim")
+    try:
+        model.learn(total_timesteps=int(args.timesteps), log_interval=1, progress_bar=True, callback=save_callback)
+    except KeyboardInterrupt:
+        print("Training interrupted by user.")
+    finally: # 确保数据被保存
+        model.save("./log/sac_jsbsim") # 保存模型
+        np.save("./log/decision_data.npy", save_callback.data) # 保存数据
+        print("Training data saved.")
 
 if args.test:
     model = SAC.load("./log/sac_jsbsim")
 
     win = 0
     episode = 0
-
+    print(type(env))
     obs = env.reset()
+    print(f"obs shape: {obs.shape}")
+    print(f"obs dtype: {obs.dtype}")
     while True:
         action, _states = model.predict(obs)
         obs, rewards, dones, info = env.step(action)
-        env.render()
+        # env.render()
         if dones == True:
             f = open('./log/sac_jsbsim_record.txt', 'a')
             if rewards == 50:
